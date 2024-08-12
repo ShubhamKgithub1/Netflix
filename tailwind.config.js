@@ -10,6 +10,7 @@ module.exports = {
       colors: {
         'custom-input': 'rgba(70, 90, 126, 0.4)',
         'custom-gray': 'rgba(255, 255, 255, 0.7)',
+        'custom-red': '#e50914',
       },
     },
   },

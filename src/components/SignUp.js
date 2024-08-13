@@ -1,37 +1,76 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Header from "./Header";
+import { Validate } from "../utils/validate";
+
 const SignUp = () => {
-  const [isActive, setIsActive] = useState(false);
-  const [email, setEmail] = useState(false);
+  const [isEmailActive, setIsEmailActive] = useState(false);
+  const [isPasswordActive, setIsPasswordActive] = useState(false);
+  const [isEmail, setIsEmail] = useState(false);
+  const [isPassword, setIsPassword] = useState(false);
   const [isSignIn, setIsSignIn] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const email = useRef(null);
+  const password = useRef(null);
+  const handleSignIn = () => {
+    const message = Validate(email.current.value, password.current.value);
+    // if (message) {
+    //   setErrorMsg(message);
+    // }
+    // if (message === null) {
+    //   setErrorMsg(null);
+    // }
+    setErrorMsg(message);
+    console.log(message);
+  };
+
   return (
-    <div className="bg-[url('https://assets.nflxext.com/ffe/siteui/vlv3/b2c3e95b-b7b5-4bb7-a883-f4bfc7472fb7/19fc1a4c-82db-4481-ad08-3a1dffbb8c39/IN-en-20240805-POP_SIGNUP_TWO_WEEKS-perspective_WEB_24a485f6-1820-42be-9b60-1b066f1eb869_large.jpg')] bg-cover bg-center h-[75vh]">
+    <div className="bg-[url('https://assets.nflxext.com/ffe/siteui/vlv3/b2c3e95b-b7b5-4bb7-a883-f4bfc7472fb7/19fc1a4c-82db-4481-ad08-3a1dffbb8c39/IN-en-20240805-POP_SIGNUP_TWO_WEEKS-perspective_WEB_24a485f6-1820-42be-9b60-1b066f1eb869_large.jpg')] bg-cover bg-center h-[85vh]">
       <div className="bg-custom-gradient h-full relative">
-        <Header SignIn={isSignIn} setSignIn={setIsSignIn}/>
+        <Header SignIn={isSignIn} setSignIn={setIsSignIn} />
         {/* Login/SignUp section */}
-        <div className="h-[80%] flex items-center justify-center">
+        <div className="h-[85%] flex items-center justify-center">
           {isSignIn ? (
-            <div className="text-white flex flex-col gap-7 justify-between py-14 w-[23%] bg-black bg-opacity-70 px-14 rounded-lg">
+            <div
+              className={`text-white flex flex-col gap-7 justify-between py-14 w-[23%] bg-black bg-opacity-70 px-14 rounded-lg ${
+                errorMsg && "outline-[1px] outline-dashed outline-red-600"
+              }`}
+            >
               <h1 className="text-4xl font-bold text-left">Sign In</h1>
-              <form className="w-full flex flex-col gap-6 h-[80%] mt-5">
+              <form
+                className="w-full flex flex-col gap-6 h-[80%] mt-5"
+                onSubmit={(e) => e.preventDefault()}
+              >
                 <input
-                  className="py-4 border rounded-md px-4 bg-slate-600 bg-opacity-20"
+                  ref={email}
+                  className={`py-4 border rounded-md px-4 bg-slate-600 bg-opacity-20`}
                   type="text"
                   placeholder="Email address"
                 />
                 <input
+                  ref={password}
                   className="bg-transparent py-4 px-4 border rounded-md bg-slate-600 bg-opacity-20"
                   type="password"
                   placeholder="Password"
                 />
-                <button className="bg-custom-red py-2 font-medium w-full rounded-md mt-4 hover:scale-x-[0.97] active:scale-100 transition-all duration-300">
+                {errorMsg && (
+                  <p className="text-red-600 font-normal pt-2">{errorMsg}</p>
+                )}
+
+                <button
+                  className="bg-custom-red py-2 font-medium w-full rounded-md mt-4 hover:scale-x-[0.97] active:scale-100 transition-all duration-300"
+                  onClick={handleSignIn}
+                >
                   SignIn
                 </button>
               </form>
-              <div >
-              <span className="text-custom-gray">New to Netflix?</span>
-              <span className="font-semibold pl-2 cursor-pointer"
-              onClick={()=>setIsSignIn(false)}>Sign up now.</span>
+              <div>
+                <span className="text-custom-gray">New to Netflix?</span>
+                <span
+                  className="font-semibold pl-2 cursor-pointer"
+                  onClick={() => setIsSignIn(false)}
+                >
+                  Sign up now.
+                </span>
               </div>
             </div>
           ) : (
@@ -45,37 +84,89 @@ const SignUp = () => {
                   Ready to watch? Enter your email to create or restart your
                   membership.
                 </p>
-                <form className="flex gap-4">
-                  <div
-                    className={`relative border border-slate-400 rounded-md w-96 ${
-                      isActive ? "bg-custom-input" : "bg-transparent"
-                    } transition-all duration-300 px-1`}
-                  >
+                <form
+                  onSubmit={(e) => e.preventDefault()}
+                  className={`flex flex-col items-center gap-6 p-4 rounded-lg ${
+                    errorMsg && "outline-[1px] outline-double outline-red-600"
+                  }`}
+                >
+                  <div className="flex gap-6">
                     <div
-                      className={`absolute left-3 h-4 ${
-                        isActive
-                          ? "top-0 text-custom-gray text-sm"
-                          : "top-[25%]"
-                      }  transition-all transform duration-150`}
+                      className={`relative border border-slate-400 rounded-md w-96 ${
+                        isEmailActive
+                          ? "bg-custom-input"
+                          : "bg-black bg-opacity-30"
+                      } transition-all duration-300 px-1`}
                     >
-                      Email address
+                      <div
+                        className={`absolute left-3 h-4 ${
+                          isEmailActive
+                            ? "top-0 text-custom-gray text-sm"
+                            : "top-[25%]"
+                        }  transition-all transform duration-150`}
+                      >
+                        Email address
+                      </div>
+                      <div>
+                        <input
+                          ref={email}
+                          type="text"
+                          className="p-2 mt-3 bg-transparent outline-none w-[100%]"
+                          onFocus={() => setIsEmailActive(true)}
+                          // {isFilled && onBlur={() => setIsActive(false)}}
+                          onChange={(e) => setIsEmail(e.target.value)}
+                          onBlur={() =>
+                            isEmail
+                              ? setIsEmailActive(true)
+                              : setIsEmailActive(false)
+                          }
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <input
-                        type="text"
-                        className="p-2 mt-3 bg-transparent outline-none w-[100%]"
-                        onFocus={() => setIsActive(true)}
-                        // {isFilled && onBlur={() => setIsActive(false)}}
-                        onChange={(e) => setEmail(e.target.value)}
-                        onBlur={() =>
-                          email ? setIsActive(true) : setIsActive(false)
-                        }
-                      />
+                    <div
+                      className={`relative border border-slate-400 rounded-md w-96 ${
+                        isPasswordActive
+                          ? "bg-custom-input"
+                          : "bg-black bg-opacity-20"
+                      } transition-all duration-300 px-1`}
+                    >
+                      <div
+                        className={`absolute left-3 h-4 ${
+                          isPasswordActive
+                            ? "top-0 text-custom-gray text-sm"
+                            : "top-[25%]"
+                        }  transition-all transform duration-150`}
+                      >
+                        Enter Password
+                      </div>
+                      <div>
+                        <input
+                          ref={password}
+                          type="password"
+                          className="p-2 mt-3 bg-transparent outline-none w-[100%]"
+                          onFocus={() => setIsPasswordActive(true)}
+                          // {isFilled && onBlur={() => setIsActive(false)}}
+                          onChange={(e) => setIsPassword(e.target.value)}
+                          onBlur={() =>
+                            isPassword
+                              ? setIsPasswordActive(true)
+                              : setIsPasswordActive(false)
+                          }
+                        />
+                      </div>
                     </div>
                   </div>
+                  {errorMsg && (
+                    <p className="text-lg text-red-600 font-medium">
+                      {errorMsg}
+                    </p>
+                  )}
 
-                  <button className="px-6 py-2 bg-custom-red text-white text-2xl font-semibold rounded-md hover:scale-x-[0.97] active:scale-x-95 transition-all duration-300">
-                    Get Started &gt;{" "}
+                  <button
+                    className="w-[30%] py-2 bg-custom-red text-white text-xl font-medium rounded-md hover:scale-x-[0.97] active:scale-x-95 transition-all duration-300"
+                    onClick={handleSignIn}
+                  >
+                    Sign Up
                   </button>
                 </form>
               </div>

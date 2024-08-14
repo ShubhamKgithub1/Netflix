@@ -1,16 +1,29 @@
 import { useState, useRef } from "react";
 import Header from "./Header";
 import { Validate } from "../utils/validate";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const navigate = useNavigate();
+  const [isUserNameActive, setIsUserNameActive] = useState(false);
   const [isEmailActive, setIsEmailActive] = useState(false);
   const [isPasswordActive, setIsPasswordActive] = useState(false);
+  const [isUserName, setIsUserName] = useState(false);
   const [isEmail, setIsEmail] = useState(false);
   const [isPassword, setIsPassword] = useState(false);
-  const [isSignIn, setIsSignIn] = useState(false);
+  const [isSignInForm, setisSignInForm] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   const email = useRef(null);
   const password = useRef(null);
+  const handleForm = () => {
+    setisSignInForm(false);
+    setErrorMsg(null);
+  };
   const handleSignIn = () => {
     const message = Validate(email.current.value, password.current.value);
     // if (message) {
@@ -20,16 +33,58 @@ const SignUp = () => {
     //   setErrorMsg(null);
     // }
     setErrorMsg(message);
-    console.log(message);
+
+    if (!isSignInForm) {
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          console.log(user);
+          navigate("/browse");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMsg(errorMessage);
+          navigate("/");
+        });
+    } else {
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+          navigate("/browse");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMsg(errorMessage);
+          navigate("/");
+        });
+    }
   };
 
   return (
     <div className="bg-[url('https://assets.nflxext.com/ffe/siteui/vlv3/b2c3e95b-b7b5-4bb7-a883-f4bfc7472fb7/19fc1a4c-82db-4481-ad08-3a1dffbb8c39/IN-en-20240805-POP_SIGNUP_TWO_WEEKS-perspective_WEB_24a485f6-1820-42be-9b60-1b066f1eb869_large.jpg')] bg-cover bg-center h-[85vh]">
       <div className="bg-custom-gradient h-full relative">
-        <Header SignIn={isSignIn} setSignIn={setIsSignIn} />
+        <Header
+          SignInOption={!isSignInForm}
+          setSignInOption={setisSignInForm}
+          setErrorMsg={setErrorMsg}
+          LogOutOption={false}
+        />
         {/* Login/SignUp section */}
         <div className="h-[85%] flex items-center justify-center">
-          {isSignIn ? (
+          {isSignInForm ? (
             <div
               className={`text-white flex flex-col gap-7 justify-between py-14 w-[23%] bg-black bg-opacity-70 px-14 rounded-lg ${
                 errorMsg && "outline-[1px] outline-dashed outline-red-600"
@@ -67,7 +122,7 @@ const SignUp = () => {
                 <span className="text-custom-gray">New to Netflix?</span>
                 <span
                   className="font-semibold pl-2 cursor-pointer"
-                  onClick={() => setIsSignIn(false)}
+                  onClick={handleForm}
                 >
                   Sign up now.
                 </span>
@@ -90,9 +145,39 @@ const SignUp = () => {
                     errorMsg && "outline-[1px] outline-double outline-red-600"
                   }`}
                 >
-                  <div className="flex gap-6">
+                  <div className="flex gap-4">
                     <div
-                      className={`relative border border-slate-400 rounded-md w-96 ${
+                      className={`relative border border-slate-400 rounded-md w-64 ${
+                        isUserNameActive
+                          ? "bg-custom-input"
+                          : "bg-black bg-opacity-30"
+                      } transition-all duration-300 px-1`}
+                    >
+                      <div
+                        className={`absolute left-3 h-4 ${
+                          isUserNameActive
+                            ? "top-0 text-custom-gray text-sm"
+                            : "top-[25%]"
+                        }  transition-all transform duration-150`}
+                      >
+                        Username
+                      </div>
+                      <div>
+                        <input
+                          type="text"
+                          className="p-2 mt-3 bg-transparent outline-none w-[100%]"
+                          onFocus={() => setIsUserNameActive(true)}
+                          onChange={(e) => setIsUserName(e.target.value)}
+                          onBlur={() =>
+                            isUserName
+                              ? setIsUserNameActive(true)
+                              : setIsUserNameActive(false)
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div
+                      className={`relative border border-slate-400 rounded-md w-64 ${
                         isEmailActive
                           ? "bg-custom-input"
                           : "bg-black bg-opacity-30"
@@ -124,7 +209,7 @@ const SignUp = () => {
                       </div>
                     </div>
                     <div
-                      className={`relative border border-slate-400 rounded-md w-96 ${
+                      className={`relative border border-slate-400 rounded-md w-64 ${
                         isPasswordActive
                           ? "bg-custom-input"
                           : "bg-black bg-opacity-20"
@@ -137,7 +222,7 @@ const SignUp = () => {
                             : "top-[25%]"
                         }  transition-all transform duration-150`}
                       >
-                        Enter Password
+                        Password
                       </div>
                       <div>
                         <input

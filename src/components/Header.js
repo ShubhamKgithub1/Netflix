@@ -1,6 +1,19 @@
-const Header = ({ SignIn, setSignIn }) => {
-  console.log(!SignIn);
+import {useNavigate } from "react-router-dom";
+import { auth } from "../utils/firebase";
+import { signOut } from "firebase/auth";
 
+const Header = ({ SignInOption, setSignInOption , setErrorMsg,LogOutOption}) => {
+  const navigate=useNavigate();
+  const handleSignIn =()=>{
+    setSignInOption(true); setErrorMsg(null);
+  };
+  const handleSignOut =()=>{
+    signOut(auth).then(() => {
+      navigate("/");
+    }).catch((error) => {
+      navigate("/error");
+    });
+  };
   return (
     <div className="flex items-center justify-between bg-transparent px-8 py-2 w-[65%] mx-auto">
       <img
@@ -9,7 +22,7 @@ const Header = ({ SignIn, setSignIn }) => {
         alt="logo"
       />
       <div>
-        {!SignIn && (
+        {SignInOption && (
           <div className=" flex items-center space-x-4">
             <select className="bg-black bg-opacity-50 text-white border border-slate-500 px-4 py-[4px] transition-all transform duration-300 rounded-md">
               <option className="bg-white text-black transition-all transform duration-300">
@@ -21,9 +34,20 @@ const Header = ({ SignIn, setSignIn }) => {
             </select>
             <button
               className="bg-custom-red text-white text-sm px-4 py-[6px] font-semibold rounded-md active:scale-100 hover:scale-x-[0.97] transition-all duration-150"
-              onClick={() => setSignIn(true)}
+              onClick={handleSignIn}
             >
               Sign In
+            </button>
+          </div>
+        )}
+        {LogOutOption&&(
+          <div>
+            <button
+              className="bg-custom-red text-white text-sm px-4 py-[6px] font-semibold rounded-md active:scale-100 hover:scale-x-[0.97] transition-all duration-150"
+              
+            onClick={handleSignOut}
+            >
+              Sign Out
             </button>
           </div>
         )}

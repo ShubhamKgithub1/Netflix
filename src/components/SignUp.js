@@ -24,12 +24,6 @@ const SignUp = () => {
   };
   const handleSignIn = () => {
     const message = Validate(email.current.value, password.current.value);
-    // if (message) {
-    //   setErrorMsg(message);
-    // }
-    // if (message === null) {
-    //   setErrorMsg(null);
-    // }
     setErrorMsg(message);
 
     if (!isSignInForm) {

@@ -40,7 +40,7 @@ const Header = ({
   return (
     <div
       className={`flex items-center justify-between px-8 py-2 w-[65%] mx-auto ${
-        LogOutOption ? "bg-gradient-to-b" : "bg-transparent"
+        LogOutOption ? " w-[90%]" : "bg-transparent"
       }`}
     >
       <img className="w-44" src={LOGO} alt="logo" />

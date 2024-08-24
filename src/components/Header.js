@@ -1,26 +1,49 @@
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { auth } from "../utils/firebase";
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { useEffect } from "react";
+import { addUser, removeUser } from "../utils/userSlice";
+import { useDispatch } from "react-redux";
+import { LOGO } from "../utils/constants";
 
-const Header = ({ SignInOption, setSignInOption , setErrorMsg,LogOutOption}) => {
-  const navigate=useNavigate();
-  const handleSignIn =()=>{
-    setSignInOption(true); setErrorMsg(null);
+const Header = ({
+  SignInOption,
+  setSignInOption,
+  setErrorMsg,
+  LogOutOption,
+}) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const handleClick = () => {
+    setSignInOption(true);
+    setErrorMsg(null);
   };
-  const handleSignOut =()=>{
-    signOut(auth).then(() => {
-      navigate("/");
-    }).catch((error) => {
-      navigate("/error");
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {})
+      .catch((error) => {
+        navigate("/error");
+      });
+  };
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const { uid, email } = user;
+        dispatch(addUser({ uid: uid, email: email }));
+        navigate("/browse");
+      } else {
+        dispatch(removeUser());
+        navigate("/");
+      }
     });
-  };
+  }, []);
   return (
-    <div className="flex items-center justify-between bg-transparent px-8 py-2 w-[65%] mx-auto">
-      <img
-        className="w-44"
-        src="https://cdn.cookielaw.org/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png"
-        alt="logo"
-      />
+    <div
+      className={`flex items-center justify-between px-8 py-2 w-[65%] mx-auto ${
+        LogOutOption ? "bg-gradient-to-b" : "bg-transparent"
+      }`}
+    >
+      <img className="w-44" src={LOGO} alt="logo" />
       <div>
         {SignInOption && (
           <div className=" flex items-center space-x-4">
@@ -34,18 +57,17 @@ const Header = ({ SignInOption, setSignInOption , setErrorMsg,LogOutOption}) => 
             </select>
             <button
               className="bg-custom-red text-white text-sm px-4 py-[6px] font-semibold rounded-md active:scale-100 hover:scale-x-[0.97] transition-all duration-150"
-              onClick={handleSignIn}
+              onClick={handleClick}
             >
               Sign In
             </button>
           </div>
         )}
-        {LogOutOption&&(
+        {LogOutOption && (
           <div>
             <button
               className="bg-custom-red text-white text-sm px-4 py-[6px] font-semibold rounded-md active:scale-100 hover:scale-x-[0.97] transition-all duration-150"
-              
-            onClick={handleSignOut}
+              onClick={handleSignOut}
             >
               Sign Out
             </button>

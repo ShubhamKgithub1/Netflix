@@ -6,10 +6,8 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
-import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
-  const navigate = useNavigate();
   const [isUserNameActive, setIsUserNameActive] = useState(false);
   const [isEmailActive, setIsEmailActive] = useState(false);
   const [isPasswordActive, setIsPasswordActive] = useState(false);
@@ -43,14 +41,11 @@ const SignUp = () => {
         .then((userCredential) => {
           // Signed up
           const user = userCredential.user;
-          console.log(user);
-          navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
           setErrorMsg(errorMessage);
-          navigate("/");
         });
     } else {
       signInWithEmailAndPassword(
@@ -62,13 +57,11 @@ const SignUp = () => {
           // Signed in
           const user = userCredential.user;
           console.log(user);
-          navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
           setErrorMsg(errorMessage);
-          navigate("/");
         });
     }
   };
@@ -103,7 +96,7 @@ const SignUp = () => {
                 />
                 <input
                   ref={password}
-                  className="bg-transparent py-4 px-4 border rounded-md bg-slate-600 bg-opacity-20"
+                  className="py-4 px-4 border rounded-md bg-slate-600 bg-opacity-20"
                   type="password"
                   placeholder="Password"
                 />

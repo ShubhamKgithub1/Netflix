@@ -39,8 +39,8 @@ const Header = ({
   }, []);
   return (
     <div
-      className={`flex items-center justify-between px-8 py-2 w-[65%] mx-auto ${
-        LogOutOption ? " w-[90%]" : "bg-transparent"
+      className={`flex items-center justify-between px-10 py-2 w-[65%] mx-auto ${
+        LogOutOption ? "w-[95vw] " : "bg-transparent"
       }`}
     >
       <img className="w-44" src={LOGO} alt="logo" />

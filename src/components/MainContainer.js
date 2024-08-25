@@ -24,18 +24,18 @@ const MainContainer = ({ movie }) => {
   // }, []);
   useTrailer(movie);
   return (
-    <div className="relative h-full overflow-hidden">
+    <div className="relative aspect-video w-screen overflow-hidden">
       <iframe
-        className="aspect-video w-screen"
-        src={`https://www.youtube.com/embed/${trailerId}?&autoplay=0&mute=1`}
+        className="aspect-video w-screen "
+        src={`https://www.youtube.com/embed/${trailerId}?controls=0&autoplay=0&playsinline=1&mute=1&loop=1`}
         title="YouTube video player"
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;"
         referrerPolicy="strict-origin-when-cross-origin"
       ></iframe>
-      <div className="absolute top-0 flex items-center w-full bg-transparent h-full text-white bg-gradient-to-r from-black opacity-90">
-        <div className="w-[40%] ml-[5%] mt-[15%]">
-          <h1 className="text-4xl font-bold">{title}</h1>
+      <div className="absolute top-0 flex items-center w-screen aspect-video text-white bg-black bg-opacity-40">
+        <div className="w-[40%] ml-24 mt-[10%]">
+          <h1 className="text-4xl font-bold text-green-300">{title}</h1>
           <p className="text-lg font-semibold mt-7 mb-4">{overview}</p>
           <button className="bg-white text-black text-lg font-semibold py-3 px-10 mr-4 rounded-md hover:bg-opacity-70 transition-all duration-200">
             Play
